@@ -7,16 +7,16 @@
   $partOfDay = "hägune aeg";
   if(($hourNow >= 8) && ($dayNow == 1)){
 	$partOfDay = "veebiprogrammeerimise loeng";
-  } elseif(($hourNow >= 12) && ($dayNow == 1)){
+  } elseif(($hourNow >= 12 && $hourNow < 16) && ($dayNow == 1)){
 	$partOfDay = "interaktsioonidisaini loeng";
   } elseif(($hourNow >= 8) && ($dayNow == 2)){
 	$partOfDay = "programmeerimise aluste loeng";
-  } elseif(($hourNow >= 12) && ($dayNow == 2)){
+  } elseif(($hourNow >= 12 && $hourNow < 14) && ($dayNow == 2)){
 	$partOfDay = "andmebaaside projekteerimise loeng";
-  } elseif(($hourNow >= 14) && ($dayNow >= 2 && <= 5)){
+  } elseif(($hourNow >= 14 && $hourNow < 16) && ($dayNow > 1 && $dayNow < 6)){
 	$partOfDay = "jaapani keele loeng";
   } else {
-	$partOfDay = "loenguvaba aeg"
+	$partOfDay = "loenguvaba aeg";
   }
 ?>
 <!DOCTYPE html>
@@ -41,7 +41,7 @@
   ?>
   .</p>
   <?php
-    echo "<p>Lehe avamise hetkel oli " .$partOfDay .".</p>";
+    echo "<p>Lehe avamise hetkel oli <strong>" .$partOfDay ."</strong>.</p>";
   ?>
   <hr>
 </body>
