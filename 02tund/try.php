@@ -1,13 +1,22 @@
 <?php
   $userName = "Mirjam Petti";
   $fullTimeNow = date("d.m.Y H:i:s");
+  $dayNow = date("w");
   $hourNow = date("H");
+//$minuteNow = date("i");
   $partOfDay = "hägune aeg";
-  if($hourNow < 8){
-	$partOfDay = "varane hommik";
-  }
-  if($hourNow > 8){
-	$partOfDay = "kooliaeg";
+  if(($hourNow >= 8) && ($dayNow == 1)){
+	$partOfDay = "veebiprogrammeerimise loeng";
+  } elseif(($hourNow >= 12) && ($dayNow == 1)){
+	$partOfDay = "interaktsioonidisaini loeng";
+  } elseif(($hourNow >= 8) && ($dayNow == 2)){
+	$partOfDay = "programmeerimise aluste loeng";
+  } elseif(($hourNow >= 12) && ($dayNow == 2)){
+	$partOfDay = "andmebaaside projekteerimise loeng";
+  } elseif(($hourNow >= 14) && ($dayNow >= 2 && <= 5)){
+	$partOfDay = "jaapani keele loeng";
+  } else {
+	$partOfDay = "loenguvaba aeg"
   }
 ?>
 <!DOCTYPE html>
