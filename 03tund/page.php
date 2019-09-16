@@ -2,15 +2,18 @@
   $userName = "Mirjam Petti";
   $photoDir = "../photos/";
   $picFileTypes = ["image/jpeg", "image/png"];
-  $fullTimeNow = date("d.m.Y H:i:s");
   $dayNow = date("w");
   $hourNow = date("H");
-  
+  $monthNow = date("n");
+  //kuu ja nädalapäevade massiivid
   $weekDaysET = ["esmaspäev", "teisipäev", "kolmapäev", "neljapäev", "reede", "laupäev", "pühapäev"];
+  $monthsET = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"];
+  //kuupäev
+  $fullTimeNow = "<strong>" .$weekDaysET[$dayNow -1] ." - " .date("d. ") .$monthsET[$monthNow -1] .date(" Y H:i:s") ."</strong>";
   
-  //$minuteNow = date("i");
+  //lehe avamise ajal olnud tegevus
   $partOfDay = "hägune aeg";
-  if(($hourNow >= 8) && ($dayNow == 1)){
+  if(($hourNow >= 8 && $hourNow < 12) && ($dayNow == 1)){
 	$partOfDay = "veebiprogrammeerimise loeng";
   } elseif(($hourNow >= 12 && $hourNow < 16) && ($dayNow == 1)){
 	$partOfDay = "interaktsioonidisaini praktikum";
@@ -66,14 +69,12 @@
   
   //lisame lehe päise
   require("header.php");
-  
-  //kodutöö - kõik php lehed algavad headeriga (require). header ümber teha phpks nt $headHTML = "blabla" ja lõpus on echo ja muutuja välja. footer lisaks samamoodi (loominguline). Kuu asemel eestikeelne sõna (massiiviga) + nädalapäev (ka massiivist). google php date (n) ja otsida day fo the week (mul olemas).
 ?>
 
 
 <body>
   <?php
-    echo "<h1>" .$userName ." HTML #2 16.09.2019</h1>";
+    echo "<h1>" .$userName ." PHP #2 16.09.2019</h1>";
   ?>
   <p>Antud leht on loodud koolis õppetöö raames ja ei sisalda tõsiseltvõetavat sisu!</p>
   <?php
@@ -86,11 +87,8 @@
   ?>
   .</p>
   <?php
-    echo "<p>Lehe avamise hetkel oli <strong>" .$partOfDay ."</strong>.</p>";
-  ?>
-  <hr>
-  <?php
+    echo "<p>Lehe avamise hetkel oli <strong>" .$partOfDay ."</strong>.</p><hr>";
     echo $randomImgHTML;
+  //lisame lehe jaluse
+  require("footer.php");
   ?>
-</body>
-</html>
