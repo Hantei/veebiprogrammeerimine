@@ -1,9 +1,9 @@
 <?php
  //globaalsed muutujad on väljaspool funktsiooni
   require("../../../configVP.php");
-  require("functions_film.php");
   $userName = "Mirjam Petti";
   $database = "if19_mirjam_pe_1";
+  require("functions_film.php");
   
   //pannakse funktsioon käima (sama nimi on aga pole sama muutuja)
   $filmInfoHTML = readAllFilms();

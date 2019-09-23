@@ -22,4 +22,16 @@
 	  //väljastan väärtuse
 	  return $filmInfoHTML;
 	}
+	
+	function saveFilmInfo($filmTitle, $filmYear, $filmDuration, $filmGenre, $filmCompany, $filmDirector) {
+	  $conn = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+	  $stmt = $conn->prepare("INSERT INTO film (pealkiri, aasta, kestus, zanr, tootja, lavastaja) VALUES(?,?,?,?,?,?)");
+	  echo $conn->error;
+	  //andmetüübid s-string i-integer d-decimal
+	  $stmt->bind_param("siisss", $filmTitle, $filmYear, $filmDuration, $filmGenre, $filmCompany, $filmDirector);
+	  $stmt->execute();
+	  
+	  $stmt->close();
+	  $conn->close();
+	}
 ?>
