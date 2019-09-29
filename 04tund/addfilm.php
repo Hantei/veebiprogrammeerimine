@@ -6,13 +6,14 @@
   $database = "if19_mirjam_pe_1";
   require("functions_film.php");
   $errormsg = '<p style="color:red;">Sisestage vähemalt filmi pealkiri!</p>';
-  $filmTitleInserted = NULL;
-  $filmGenreInserted = NULL;
-  $filmCompanyInserted = NULL;
-  $filmDirectorInserted = NULL;
-  $filmDurationInserted = 80;
+  //defineerin tühjad väärtused
+  $filmTitleInserted = null;
   $filmYearInserted = 2019;
-  
+  $filmDurationInserted = 80;
+  $filmGenreInserted = null;
+  $filmCompanyInserted = null;
+  $filmDirectorInserted = null;
+
   //lisame lehe päise
   require("header.php");
 ?>
@@ -21,6 +22,34 @@
 <body>
   <?php
     echo "<h1>" .$userName ." Tund #4 Filmid via SQL 28.09.2019</h1>";
+	if(isset($_POST["submitFilm"]) and (empty($_POST["filmTitle"])) ){
+		$ok = false;
+		if (isset($_POST["filmYear"])) {
+			$filmYearInserted = htmlentities($_POST["filmYear"]);
+		}
+		if (isset($_POST["filmDuration"])) {
+			$filmDurationInserted = htmlentities($_POST["filmDuration"]);
+		}
+		if (isset($_POST["filmGenre"])) {
+			$filmGenreInserted = htmlentities($_POST["filmGenre"]);
+		}
+		if (isset($_POST["filmCompany"])) {
+			$filmCompanyInserted = htmlentities($_POST["filmCompany"]);
+		}
+		if (isset($_POST["filmDirector"])) {
+			$filmDirectorInserted = htmlentities($_POST["filmDirector"]);
+		}
+	}else {
+		$ok = true;
+		//kui on nuppu vajutatud
+		if(isset($_POST["submitFilm"])){
+		//salvestame ainult siis kui vähemalt pealkiri on olemas
+			if(!empty($_POST["filmTitle"])) {
+				saveFilmInfo($_POST["filmTitle"], $_POST["filmYear"], $_POST["filmDuration"], $_POST["filmGenre"], $_POST["filmCompany"], $_POST["filmDirector"]);
+			}
+		unset($_POST);
+	}
+  }
   ?>
   <p>Antud leht on loodud koolis õppetöö raames ja ei sisalda tõsiseltvõetavat sisu!</p>
   <hr>
@@ -42,42 +71,10 @@
 	<input type="submit" value="Salvesta filmi info" name="submitFilm">
   </form>
   <?php
-    //var_dump($_POST);
-  //kui on nuppu vajutatud
-  if(isset($_POST["submitFilm"])){
-	//salvestame ainult siis kui vähemalt pealkiri on olemas
-	if(!empty($_POST["filmTitle"])) {
-	  saveFilmInfo($_POST["filmTitle"], $_POST["filmYear"], $_POST["filmDuration"], $_POST["filmGenre"], $_POST["filmCompany"], $_POST["filmDirector"]);
-	}
-	else {
-		if(empty($_POST["filmYear"])) {
-		  $filmYearInserted = NULL;
-		}else {
-		  $filmYearInserted = $_POST["filmYear"];
-	    }
-		if(empty($_POST["filmDuration"])) {
-		  $filmDurationInserted = NULL;
-		}else {
-		  $filmDurationInserted = $_POST["filmDuration"];
-	    }
-		if(empty($_POST["filmGendre"])) {
-		  $filmGenreInserted = NULL;
-		}else {
-		  $filmGenreInserted = $_POST["filmGenre"];
-	    }
+  if (!$ok) {
 	  echo $errormsg;
-	  echo "<h2>Your Input:</h2>";
-		echo $filmTitle;
-		echo "<br>";
-		echo $filmGenreInserted;
-		echo "<br>";
-		echo $filmYearInserted;
-		echo "<br>";
-		echo $filmCompany;
-		echo "<br>";
-		echo $filmDirector;
-	}
   }
+    //var_dump($_POST);
   //echo $filmInfoHTML;
   //echo "Server: " .$serverHost .", kasutaja: " .$serverUsername;
   //lisame lehe jaluse
