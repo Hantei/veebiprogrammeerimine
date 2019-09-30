@@ -73,7 +73,7 @@
   if(!empty($_POST["birthDay"]) and !empty($_POST["birthMonth"]) and !empty($_POST["birthYear"])) {
 	  if(checkdate($birthMonth, $birthDay, $birthYear)) {
 		  $tempDate = new DateTime($birthYear ."-" -$birthMonth ."-" .$birthDay);
-		  $birthDate = $tempDate ->format("Y-m-d");
+		  $birthDate = $tempDate->format("Y-m-d");
 	  }else {
 		  $birthDateError = "Valitud kuupäev on vigane!";
 	  } //checkdate
