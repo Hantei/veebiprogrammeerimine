@@ -25,6 +25,7 @@
   $emailError = null;
   $passwordError = null;
   $confirmpasswordError = null;
+ 
   
 /*   //FOR tsükli näidis
   $i = $i + 1;
@@ -47,8 +48,20 @@
 	  $surname = test_input($_POST["surName"]);
 	  $gender = $_POST["gender"];
 	  $email = test_input($_POST["email"]);
-	  //parooli pikkus kontroll - strlen($_POST["password"]) < 9 siis on liiga lühike
-	  //
+	  
+	  //parooli kontroll
+	  if(isset($_POST["password"])) {
+		  if(strlen($_POST["password"]) < 9) {
+			$passwordError = " Parool peab olema vähemalt 9 tähemärki!";
+		  }
+	  }
+	  
+	  if(isset($_POST["password"]) and isset($_POST["confirmpassword"])) {
+		  if(($_POST["password"]) != ($_POST["confirmpassword"])) {
+			  $confirmpasswordError = " Sisestatud paroolid ei ühti!";
+		  }
+	  }
+	  
 	  
 	  //kontrollime, kas sünniaeg sisestati ja kas on korrektne
 	  if(isset($_POST["birthDay"]) and !empty($_POST["birthDay"])){
