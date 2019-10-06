@@ -1,8 +1,9 @@
 <?php
   require("../../../configVP.php");
-  require ("functions_main.php"); 
-  require ("functions_user.php");
+  require("functions_main.php"); 
+  require("functions_user.php");
   $database = "if19_mirjam_pe_1";
+  
   $notice = null;
   $name = null;
   $surname = null;
@@ -43,22 +44,44 @@
 	  }else {
 		  $nameError = "Palun sisestage eesnimi!";
 	  } //eesnime kontroll lõpp
+
+	  if(isset($_POST["surName"]) and !empty($_POST["surName"])) {
+		  $surname = test_input($_POST["surName"]);
+	  }else {
+		  $surnameError = "Palun sisestage perekonnanimi!";
+	  } //perekonnanime kontroll lõpp
+
+	  if(isset($_POST["email"]) and !empty($_POST["email"])) {
+		  $email = test_input($_POST["email"]);
+	  }else {
+		  $emailError = "Palun sisestage email!";
+	  } //emaili kontroll lõpp	  
+
+	  if(isset($_POST["gender"]) and !empty($_POST["gender"])) {
+		  $gender = $_POST["gender"];
+	  }else {
+		  $emailError = "Palun valige sugu!";
+	  }//sugu kontroll lõpp 	 
 	  
 	  //ajutine
-	  $surname = test_input($_POST["surName"]);
-	  $gender = $_POST["gender"];
-	  $email = test_input($_POST["email"]);
+	  //$surname = test_input($_POST["surName"]);
+	  //$gender = $_POST["gender"];
+	  //$email = test_input($_POST["email"]);
 	  
 	  //parooli kontroll
-	  if(isset($_POST["password"])) {
-		  if(strlen($_POST["password"]) < 9) {
-			$passwordError = " Parool peab olema vähemalt 9 tähemärki!";
-		  }
-	  }
-	  
-	  if(isset($_POST["password"]) and isset($_POST["confirmpassword"])) {
-		  if(($_POST["password"]) != ($_POST["confirmpassword"])) {
-			  $confirmpasswordError = " Sisestatud paroolid ei ühti!";
+	  if(!isset($_POST["password"]) or empty($_POST["password"])){
+		$passwordError = " Palun sisesta salasõna!";
+		} else {
+			if(strlen($_POST["password"]) < 8){
+				$passwordError = " Parool peab olema vähemalt 8 tähemärki!";
+			}
+		}
+		
+	  if (!isset($_POST["confirmpassword"]) or empty($_POST["confirmpassword"])){
+		  $confirmpasswordError = " Palun sisesta salasõna uuesti!";
+	  } else {
+		  if(($_POST["password"]) != ($_POST["confirmpassword"])){
+			  $confirmpasswordError = " Sisestatud salasõnad ei ühti!";
 		  }
 	  }
 	  
@@ -116,12 +139,11 @@
 	  <label>Eesnimi:</label><br>
 	  <input name="firstName" type="text" value="<?php echo $name; ?>"><span><?php echo $nameError; ?></span><br>
       <label>Perekonnanimi:</label><br>
-	  <input name="surName" type="text" value="<?php echo $surname; ?>"><span><?php echo $surnameError; ?></span>
-	  <br>
+	  <input name="surName" type="text" value="<?php echo $surname; ?>"><span><?php echo $surnameError; ?></span><br>
 	  <input type="radio" name="gender" value="2" <?php if($gender == "2"){		echo " checked";} ?>><label>Naine</label>
 	  <input type="radio" name="gender" value="1" <?php if($gender == "1"){		echo " checked";} ?>><label>Mees</label><br>
-	  <span><?php echo $genderError; ?></span>
-	  <br>
+	  <span><?php echo $genderError; ?></span><br>
+	  
 	  <label>Sünnikuupäev: </label>
 	  <?php
 		//sünnikuupäev

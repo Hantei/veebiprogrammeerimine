@@ -1,5 +1,14 @@
 <?php
-  $userName = "Mirjam Petti";
+  require("../../../configVP.php");
+  require("functions_main.php");  
+  require("functions_user.php");
+  $database = "if19_mirjam_pe_1";
+  $userName = "Anonüümne kasutaja";
+  $emailError = null;
+  $passwordError = null;
+  $email = null;
+  $notice = null;
+  
   $photoDir = "../photos/";
   $picFileTypes = ["image/jpeg", "image/png"];
   $dayNow = date("w");
@@ -47,7 +56,6 @@
 	  $semesterInfoHTML .= "</meter>";
 	  $semesterInfoHTML .= "</p>";
   }
-  
   //foto lisamine lehele
   $allPhotos = [];
   $dirContent = array_slice(scandir($photoDir), 2);
@@ -69,6 +77,27 @@
   
   //lisame lehe päise
   require("header.php");
+  
+  if(isset($_POST["submitLogIn"])) {
+	  //kui on sisestatud email
+	  if(isset($_POST["email"]) and !empty($_POST["email"])) {
+		  $email = test_input($_POST["email"]);
+	  }else {
+		  $emailError = " Palun sisestage email!";
+	  } //emaili kontroll lõpp
+
+	  if(isset($_POST["password"]) and !empty($_POST["password"])) {
+		  $password = test_input($_POST["password"]);
+	  }else {
+		  $passwordError = " Palun sisestage parool!";
+	  }	  
+	  
+	  if(empty($emailError) and empty($passwordError)) {
+		$notice = signIn($email, $_POST["password"]);
+	  } else {
+		$notice = " Sisse logimine ebaõnnestus!";
+	  }
+  }
 ?>
 
 
@@ -86,6 +115,13 @@
    echo $fullTimeNow;
   ?>
   .</p>
+  <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+	  <label>E-mail (kasutajatunnus):</label><br>
+	  <input type="email" name="email" value="<?php echo $email; ?>"><span><?php echo $emailError; ?></span><br>
+	  <label>Salasõna:</label><br>
+	  <input name="password" type="password"><span><?php echo $passwordError; ?></span><br>
+	  <input name="submitLogIn" type="submit" value="Logi sisse"><span><?php echo $notice; ?></span>
+  </form>
   <?php
     echo "<p>Lehe avamise hetkel oli <strong>" .$partOfDay ."</strong>.</p><hr>";
     echo $randomImgHTML;

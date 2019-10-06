@@ -23,9 +23,36 @@
 	}
 	
 	function signIn($email, $password) {
-		
-		//parooli õigsust kontrollib:
-		//if(password_verify($password, $passwordFromDB))
-		//uuri parooli dbst vastavalt emailile, kui matchivad, siis loe välja nimed jms - tulemus tere "nimi".
+		$notice = null;
+		$conn = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt = $conn->prepare("SELECT password FROM vpusers3 WHERE email=?");
+		echo  $conn->error;
+		$stmt->bind_param("s", $email);
+		$stmt->bind_result($passwordFromDB);
+		if($stmt->execute()){
+			if($stmt->fetch()) {
+			//parooli õigsust kontrollib:
+				if(password_verify($password, $passwordFromDB)) {
+					$stmt->close();
+					$stmt = $conn->prepare("SELECT firstname, lastname FROM vpusers3 WHERE email=?");
+					echo $conn->error;
+					$stmt->bind_param("s", $email);
+					$stmt->bind_result($firstnameFromDB, $lastnameFromDB);
+					$stmt->execute();
+					$stmt->fetch();
+					$notice = " Sisselogimine õnnestus! Tere " .$firstnameFromDB ." " .$lastnameFromDB .".";
+				}else {
+					$notice = " Vale salasõna.";
+				}
+			}else {
+				$notice = " Sellist kasutajat (" .$email .") ei eksisteeri!";
+			}
+		}else {
+			$notice = " Sisse logimisel tekkis viga: " .$stmt->error;
+		}
+		$stmt->close();
+		$conn->close();
+		return $notice;	
 	}
+
 ?>
