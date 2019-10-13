@@ -98,13 +98,14 @@
 		$notice = " Sisse logimine ebaõnnestus!";
 	  }
   }
-  
-  //lisame lehe päise
-  require("header.php");
-
 ?>
 
-
+<!DOCTYPE html>
+<html lang="et">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Veebiprogrammeerimise harjutused</title>
+</head>
 <body>
   <?php
     echo "<h1>" .$userName ." PHP #6 07.10.2019</h1>";
