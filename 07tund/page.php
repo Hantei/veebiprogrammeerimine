@@ -89,7 +89,7 @@
 	  if(isset($_POST["password"]) and !empty($_POST["password"])) {
 		  $password = test_input($_POST["password"]);
 	  }else {
-		  $passwordError = " Palun sisestage parool!";
+		  $passwordError = " Palun sisestage salasõna!";
 	  }	  
 	  
 	  if(empty($emailError) and empty($passwordError)) {

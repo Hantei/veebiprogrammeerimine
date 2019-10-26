@@ -125,26 +125,40 @@
 	return $notice;
   }
   
-  	function changePassword($userid, $password){
+  	function changePassword($userid, $oldPassword, $newPassword){
 	$notice = null;
-	$conn = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
-	$stmt = $conn->prepare("UPDATE vpusers3 SET password=? WHERE userid=?");
-	echo $conn->error;
-	!!		$stmt->bind_param("sssi", $mydescription, $mybgcolor, $mytxtcolor, $_SESSION["userID"]);
-	//valmistame parooli salvestamiseks ette
-	$options = ["cost" => 12, "salt" => substr(sha1(rand()), 0, 22)];
-	$pwdhash = password_hash($password, PASSWORD_BCRYPT, $options);
-	$stmt->bind_param("is", $userid, $pwdhash);
-	if($stmt->execute()) {
-			$notice = " Salasõna vahetamine õnnestus!";
-		}else {
-			$notice = " Salasõna salvestamisel tekkis tehniline viga: " .$stmt->error;
+		$conn = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt = $conn->prepare("SELECT password FROM vpusers3 WHERE id=?");
+		echo  $conn->error;
+		$stmt->bind_param("i", $userid);
+		$stmt->bind_result($passwordFromDB);
+		if($stmt->execute()){
+			if($stmt->fetch()) {
+			//parooli õigsust kontrollib:
+				if(password_verify($oldPassword, $passwordFromDB)) {
+					$stmt->close();
+					$stmt = $conn->prepare("UPDATE vpusers3 SET password=? WHERE id=?");
+					echo $conn->error;
+					//valmistame parooli salvestamiseks ette
+					$options = ["cost" => 12, "salt" => substr(sha1(rand()), 0, 22)];
+					$pwdhash = password_hash($newPassword, PASSWORD_BCRYPT, $options);
+					$stmt->bind_param("si", $pwdhash, $userid);
+					if($stmt->execute()) {
+						$notice = " Salasõna vahetamine õnnestus!";
+					}else {
+						$notice = " Salasõna salvestamisel tekkis tehniline viga: " .$stmt->error;
+					}
+				}else {
+					$notice = " Sisestatud praegune salasõna on vale!";
+				}
+			}else {
+				$notice = " Viga!";
+			}
 		}
-	
-	$stmt->close();
-	$conn->close();
-	return $notice;
-  }
+		$stmt->close();
+		$conn->close();
+		return $notice;
+	}
   
 	function showMyDesc(){
 		$notice = null;

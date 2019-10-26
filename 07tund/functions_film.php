@@ -48,18 +48,32 @@
 	} 
 	
 	function readSomeFilms() {
+		$firstname = "Ajutine";
+		 $lastname = " Kohatäide";
 	  $maxYear = date("Y") - 50;
 	  $conn = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
 	  mysqli_set_charset( $conn, 'utf8');
-	  $stmt = $conn->prepare("SELECT pealkiri, aasta, kestus, zanr, tootja, lavastaja FROM film WHERE aasta < ? ORDER BY aasta");
-	  $stmt->bind_result($filmTitle, $filmYear, $filmDuration, $filmGenre, $filmCompany, $filmDirector);
+	  $someFilmInfoHTML = '<table style="width:50%" border="1"><tr bgcolor="#C0C0C0">';
+	  $someFilmInfoHTML .= '<th>Filmi lisaja nimi</th><th>Filmi nimi</th><th>Žanr</th><th>Lavastaja</th><th>Kestus</th><th>Tootja</th><th>Tootmisaasta</th>';
+	  $someFilmInfoHTML .= '</tr>';
+	  $stmt = $conn->prepare("SELECT film_ID, pealkiri, aasta, kestus, zanr, tootja, lavastaja FROM film WHERE aasta < ? ORDER BY aasta");
+	  $stmt->bind_result($filmID, $filmTitle, $filmYear, $filmDuration, $filmGenre, $filmCompany, $filmDirector);
 	  $stmt->bind_param("i", $maxYear);
 	  $stmt->execute();
-	  $someFilmInfoHTML = '<table style="width:50%" border="1"><tr bgcolor="#C0C0C0">';
-	  $someFilmInfoHTML .= '<th>Filmi nimi</th><th>Žanr</th><th>Lavastaja</th><th>Kestus</th><th>Tootja</th><th>Tootmisaasta</th>';
-	  $someFilmInfoHTML .= '</tr>';
 	  while($stmt->fetch()){
-		  $someFilmInfoHTML .= '<tr><td>' .$filmTitle .'</td><td>';
+		  $someFilmInfoHTML .= '<tr><td>'; 
+		  /* $stmt = $conn->prepare("SELECT firstname, lastname FROM vpusers3 WHERE id=(SELECT AdderID FROM vp_add_film WHERE FilmID=?)");
+		  $stmt->bind_result($firstname, $lastname);
+		  $stmt->bind_param("i", $filmID);
+	      $stmt->execute();
+			if($stmt->fetch()){
+				$someFilmInfoHTML .= $firstname . $lastname .'</td><td>';
+				$stmt->close();
+			}else{
+				$someFilmInfoHTML .= 'Pekki läks.</td><td>';
+			} */
+		  $someFilmInfoHTML .= $firstname . $lastname .'</td><td>';
+		  $someFilmInfoHTML .= $filmTitle .'</td><td>';
 		  $someFilmInfoHTML .= $filmGenre .'</td><td>';
 		  $someFilmInfoHTML .= $filmDirector .'</td><td>';
 		  if ($filmDuration < 60){
@@ -88,13 +102,27 @@
 	  return $someFilmInfoHTML;
 	}
 	
-	function saveFilmInfo($filmTitle, $filmYear, $filmDuration, $filmGenre, $filmCompany, $filmDirector) {
+	function saveFilmInfo($userid, $filmTitle, $filmYear, $filmDuration, $filmGenre, $filmCompany, $filmDirector) {
 	  $conn = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+	  mysqli_set_charset( $conn, 'utf8');
 	  $stmt = $conn->prepare("INSERT INTO film (pealkiri, aasta, kestus, zanr, tootja, lavastaja) VALUES(?,?,?,?,?,?)");
 	  echo $conn->error;
 	  //andmetüübid s-string i-integer d-decimal
 	  $stmt->bind_param("siisss", $filmTitle, $filmYear, $filmDuration, $filmGenre, $filmCompany, $filmDirector);
 	  $stmt->execute();
+		$stmt->close();
+		$stmt = $conn->prepare("SELECT Film_ID FROM film WHERE pealkiri=? AND aasta=? AND kestus=?");
+		$stmt->bind_result($filmIdFromDB);
+		$stmt->bind_param("sii", $filmTitle, $filmYear, $filmDuration);
+		$stmt->execute();
+		if($stmt->fetch()){
+			$stmt->close();
+			$stmt = $conn->prepare("INSERT INTO vp_add_film (FilmID, AdderID) VALUES(?,?)");
+			$stmt->bind_param("ii", $filmIdFromDB, $userid);
+			$stmt->execute();
+		}else{
+			echo "Midagi läks valesti!";
+		}
 	  $stmt->close();
 	  $conn->close();
 	}

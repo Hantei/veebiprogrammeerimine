@@ -73,7 +73,7 @@
 		$passwordError = " Palun sisesta salasõna!";
 		} else {
 			if(strlen($_POST["password"]) < 8){
-				$passwordError = " Parool peab olema vähemalt 8 tähemärki!";
+				$passwordError = " Salasõna peab olema vähemalt 8 tähemärki!";
 			}
 		}
 		

@@ -7,8 +7,9 @@
   $mybgcolor = "#FFFFFF";
   $mytxtcolor = "#000000";
   $mydescription = null;
-  $passwordError = null;
-  $passwordError2 = null;
+  $oldPasswordError = null;
+  $newPasswordError = null;
+  $newPasswordError2 = null;
   $notice = null;
   
   //kui pole sisseloginud
@@ -36,7 +37,7 @@
 		$myProfileDesc = showMyDesc();
 			if(!empty($myProfileDesc)){
 				$mydescription = $myProfileDesc;
-    }
+			}
 	  }
 	  if(!empty($_POST["bgcolor"])) {
 		  $mybgcolor = $_POST["bgcolor"];
@@ -48,28 +49,45 @@
 		  $notice = createProfile($userid, $mydescription, $mybgcolor, $mytxtcolor);
 	  }
   }
-  
+
     if(isset($_POST["changePassword"])) {
-	  if(empty($_POST["newPassword"])) {
-		  $passwordError = " Palun sisesta uus salasõna!";
-	  }else {
-		  if($_POST["newPassword"] < 8){
-			$passwordError = " Salasõna peab olema vähemalt 8 märki!";
-		  }else{
-			if(empty($_POST["newPassword2"])) {
-				$passwordError2 = " Palun sisesta uus salasõna uuesti!";
+		if(isset($_POST["oldPassword"]) and !empty($_POST["oldPassword"])) {
+			if(($_POST["oldPassword"]) == ($_POST["newPassword"])) {
+				$newPasswordError = " Uus salasõna ei saa olla sama, mis vana salasõna!";
 			}else{
-				if($_POST["newPassword"] != $_POST["newPassword2"]) {
-				$passwordError2 = " Salasõnad ei ole ühesugused!";
-				}else{
-					if(empty ($passwordError) and empty ($passwordError2)){
-						$notice = changePassword($userid, $_POST["newPassword"]);
-					}
-				}
+		    	$oldPassword = test_input($_POST["oldPassword"]);
 			}
-		  }
-	  }
-  }
+		}else {
+		  $oldPasswordError = " Palun sisestage praegune salasõna!";
+		}
+		if(isset($_POST["newPassword"]) and !empty($_POST["newPassword"])) {
+			if(strlen($_POST["newPassword"]) < 8){
+				$newPasswordError = " Salasõna peab olema vähemalt 8 tähemärki!";
+			}else {
+				$newPassword = test_input($_POST["newPassword"]);
+			}
+		}else {
+		  $newPasswordError = " Palun sisestage uus salasõna!";
+		}	
+		if(isset($_POST["newPassword2"]) and !empty($_POST["newPassword2"])) {
+			if(strlen($_POST["newPassword2"]) < 8){
+				$newPasswordError2 = " Salasõna peab olema vähemalt 8 tähemärki!";
+			}else {
+				$newPassword2 = test_input($_POST["newPassword2"]);
+			}
+		}else {
+		  $newPasswordError2 = " Palun sisestage uus salasõna uuesti!";
+		}		    
+		if (empty ($newPasswordError2) and (($_POST["newPassword"]) != ($_POST["newPassword2"]))) {
+			$newPasswordError2 = " Sisestatud uued salasõnad ei ühti!";
+		}else {
+			if(empty($oldPasswordError) and empty($newPasswordError) and empty($newPasswordError2)) {
+				$notice = changePassword($_SESSION["userID"], $_POST["oldPassword"], $_POST["newPassword"]);
+			}else {
+				$notice = " Salasõna vahetamine ebaõnnestus!";
+			}
+		}
+	}
   
   //lisame lehe päise
   require("header.php");
@@ -94,8 +112,9 @@
   <hr>
   <p>Muuda salasõna:</p>
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-	  <label>Uus parool: </label><input name="newPassword" type="password"><?php echo $passwordError; ?><br>
-	  <label>Uus parool uuesti: </label><input name="newPassword2" type="password"><?php echo $passwordError2; ?><br>
+	  <label>Vana salasõna: </label><input name="oldPassword" type="password"><?php echo $oldPasswordError; ?><br>
+	  <label>Uus salasõna: </label><input name="newPassword" type="password"><?php echo $newPasswordError; ?><br>
+	  <label>Uus salasõna uuesti: </label><input name="newPassword2" type="password"><?php echo $newPasswordError2; ?><br>
 	  <input name="changePassword" type="submit" value="Muuda salasõna"><span><?php echo $notice; ?></span>
 	</form>
   <hr>

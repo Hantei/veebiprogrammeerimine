@@ -2,9 +2,11 @@
 // KODUS - sql päringud ja näidake veebilehel, nt 10 aastat vanad filmid, või ainult kindla aastaga jne + salvestada film title year jne muutujasse, ja kui midagi on puudu (nimi) siis salvestust ei tehta, error võiks tulla siis, uus muutuja mis sisaldab infot kas kõik läks hästi. salvestage valuesse kui salvestus ei õnnestu, ehk lisada value formi koos php koodiga
  //globaalsed muutujad on väljaspool funktsiooni
   require("../../../configVP.php");
-  $userName = "Mirjam Petti";
+  require("functions_main.php");  
+  require("functions_user.php");
   $database = "if19_mirjam_pe_1";
   require("functions_film.php");
+  $notice = null;
   $errormsg = '<p style="color:red;">Sisestage vähemalt filmi pealkiri!</p>';
   //defineerin tühjad väärtused
   $filmTitleInserted = null;
@@ -13,6 +15,23 @@
   $filmGenreInserted = null;
   $filmCompanyInserted = null;
   $filmDirectorInserted = null;
+  
+  //kui pole sisseloginud
+  if(!isset($_SESSION["userID"])) {
+	  //siis jõuga sisselogimise lehele
+	  header("Location: page.php");
+	  exit();
+  }
+  
+    //väljalogimie
+  if(isset($_GET["Logout"])){
+	  session_destroy();
+	  header("Location: page.php");
+	  exit();
+  }
+  
+  $userName = $_SESSION["userFirstname"] ." " .$_SESSION["userLastname"];
+  $userid = $_SESSION["userID"];
 
   //lisame lehe päise
   require("header.php");
@@ -21,7 +40,7 @@
 
 <body>
   <?php
-    echo "<h1>" .$userName ." Tund #4 Filmid via SQL 28.09.2019</h1>";
+    echo "<h1>" .$userName ." kodutöö #7 Filmide lisamine ainult kasutajale 26.10.2019</h1>";
 	if(isset($_POST["submitFilm"]) and (empty($_POST["filmTitle"])) ){
 		$ok = false;
 		if (isset($_POST["filmYear"])) {
@@ -45,7 +64,7 @@
 		if(isset($_POST["submitFilm"])){
 		//salvestame ainult siis kui vähemalt pealkiri on olemas
 			if(!empty($_POST["filmTitle"])) {
-				saveFilmInfo($_POST["filmTitle"], $_POST["filmYear"], $_POST["filmDuration"], $_POST["filmGenre"], $_POST["filmCompany"], $_POST["filmDirector"]);
+				saveFilmInfo($userid, $_POST["filmTitle"], $_POST["filmYear"], $_POST["filmDuration"], $_POST["filmGenre"], $_POST["filmCompany"], $_POST["filmDirector"]);
 			}
 		unset($_POST);
 	}
@@ -74,9 +93,10 @@
   if (!$ok) {
 	  echo $errormsg;
   }
-    //var_dump($_POST);
-  //echo $filmInfoHTML;
-  //echo "Server: " .$serverHost .", kasutaja: " .$serverUsername;
+  ?>
+    <hr>
+  <p><a href="?Logout=1">Logi välja!</a> - Tagasi <a href="home.php">avalehele</a> - Vaata filmide listi <a href="filminfo.php">siit</a>.</p>
+  <?php
   //lisame lehe jaluse
   require("footer.php");
   ?>
